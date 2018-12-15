@@ -19,14 +19,14 @@
 :- use_module(library(clpq)).
 
 project(Xs, Cxs, ProjectCxs) :- call_residue_vars(copy_term(Xs-Cxs, CpyXs-CpyCxs), _), 
-								tell_cs(CpyCxs), 
-								prepare_dump(CpyXs, Xs, Zs, DumpCxs, ProjectCxs), 
-								dump(Zs, Vs, DumpCxs), Xs = Vs.
+				tell_cs(CpyCxs), 
+				prepare_dump(CpyXs, Xs, Zs, DumpCxs, ProjectCxs), 
+				dump(Zs, Vs, DumpCxs), Xs = Vs.
 
 prepare_dump([], [], [], Cs, Cs).
 prepare_dump([X|Xs], YsIn, ZsOut, CsIn, CsOut) :- (ground(X) -> YsIn  = [Y|Ys], ZsOut = [_|Zs], CsOut = [Y=X|Cs] ;
-         										  YsIn  = [_|Ys], ZsOut = [X|Zs], CsOut = Cs),
-											      prepare_dump(Xs, Ys, Zs, CsIn, Cs).
+         					  YsIn  = [_|Ys], ZsOut = [X|Zs], CsOut = Cs),
+					          prepare_dump(Xs, Ys, Zs, CsIn, Cs).
 
 tell_cs([]).
 tell_cs([C|Cs]) :- {C}, tell_cs(Cs).
@@ -57,15 +57,16 @@ tell_cs([C|Cs]) :- {C}, tell_cs(Cs).
 %-------------------------------------------------------------------------------------------------------------------%
 
 convex_hull(Xs, Cxs, Ys, Cys, Zs, Czs) :- scale(Cxs, Sig1, [], C1s), 
-										  scale(Cys, Sig2, C1s, C2s),
-       									  add_vect(Xs, Ys, Zs, C2s, C3s),
-       									  project(Zs, [Sig1 >= 0, Sig2 >= 0, Sig1+Sig2 = 1|C3s], Czs).
+					  scale(Cys, Sig2, C1s, C2s),
+ 					  add_vect(Xs, Ys, Zs, C2s, C3s),
+					  project(Zs, [Sig1 >= 0, Sig2 >= 0, Sig1+Sig2 = 1|C3s], Czs).
 
 scale([], _, Cs, Cs).
 scale([C1|C1s], Sig, C2s, C3s) :- C1 =.. [RelOp, A1, B1],		
-								  C2 =.. [RelOp, A2, B2], mul_exp(A1, Sig, A2),
-        						  mul_exp(B1, Sig, B2),
-        						  scale(C1s, Sig, [C2|C2s], C3s).
+			          C2 =.. [RelOp, A2, B2], 
+				  mul_exp(A1, Sig, A2),
+        			  mul_exp(B1, Sig, B2),
+        			  scale(C1s, Sig, [C2|C2s], C3s).
 
 mul_exp(E1, Sigma, E2) :- once(mulexp(E1, Sigma, E2)).
                
