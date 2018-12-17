@@ -83,6 +83,8 @@ add_vect([U|Us], [V|Vs], [W|Ws], C1s, C2s) :- add_vect(Us, Vs, Ws, [W = U+V|C1s]
 %XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 
 %GRAHAM SCAN
+
+% takes a collection of points as input
 :-['points.txt'].
 
 % pushing all points in a list
@@ -118,8 +120,17 @@ finalsort(R) :- findall(C,prepsort(C),C),
 
 check_dir(X1,Y1,X2,Y2,X3,Y3,Z) :- Z is ((X2-X1)*(Y3-Y1))-((Y2-Y1)*(X3-X1)).
 
-choose_three_points([],L)
-choose_three_points(Z,L) :- finalsort(Z), points(Z,X,Y), 
-
-graham_scan() :- 
+choose_three_points([],L).
+choose_three_points(Z,L,R) :- finalsort(Z), 
+			       points(Z,X,Y), 
+			       nextto(L,R,[L,R|Z]).
+graham_scan(Z,X,Y) :- lowest_leftmost(Z,X,Y).
+graham_scan(Z,X,Y) :- choose_three_points(Z,L,R),
+			{check_dir(X1,Y1,X2,Y2,X3,Y3,D), 
+			>=(D,0)
+			-> 
+			graham_scan(Z3,X3,Y3)
+			; 
+			graham_scan(Z1,X1,Y1)}.
+			
 
