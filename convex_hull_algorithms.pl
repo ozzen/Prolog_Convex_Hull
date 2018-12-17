@@ -118,12 +118,15 @@ prepsort(T-C) :- angle(T,C).
 finalsort(R) :- findall(C,prepsort(C),C), 
 		 keysort(C,R).
 
+% checking whether the next point lies on the convex hull or not
 check_dir(X1,Y1,X2,Y2,X3,Y3,Z) :- Z is ((X2-X1)*(Y3-Y1))-((Y2-Y1)*(X3-X1)).
 
+% selecting the three points to make comparison
 choose_three_points([],L).
 choose_three_points(Z,L,R) :- finalsort(Z), 
 			       points(Z,X,Y), 
 			       nextto(L,R,[L,R|Z]).
+			       
 graham_scan(Z,X,Y) :- lowest_leftmost(Z,X,Y).
 graham_scan(Z,X,Y) :- choose_three_points(Z,L,R),
 			{check_dir(X1,Y1,X2,Y2,X3,Y3,D), 
