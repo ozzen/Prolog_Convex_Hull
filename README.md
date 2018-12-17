@@ -9,4 +9,4 @@ To obtain the solutions for convex hull using the convex closure method, the fin
 For the remaining three algorithms, you can modify the points.txt file to input any number of points in the format of points(serial number, x-coordinaate, y-coordinate). 
 
 
-Simply call the predicates grahaam_scan/3, jarvis_march/3, quickhull/3 to get the convex hull.
+Simply call the predicates graham_scan/3, jarvis_march/3, quickhull/3 to get the convex hull.
