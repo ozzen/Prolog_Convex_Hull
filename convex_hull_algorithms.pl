@@ -176,9 +176,53 @@ graham_scan(Z,X,Y) :-
 
 % QUICKHULL
 
+% pushing all points in a list
+highest(T) :- 
+	findall(Y, points(Z,X,Y), T).
+rightmost(T) :- 
+	findall(X, newpoints(Z,X,Y), T).
+	
+% calculating the highest and the rightmost point
+right_max(X) :- 
+	leftmost(T),			   
+	max_list(T,X).
+high_max(X) :- 
+	highest(T), 
+	max_list(T,X).
+
+% Calculating maximum in a list.
 max_list([H|T], Max) :-
 	max_list(T, H, Max).
 	max_list([], Max, Max).
 max_list([H|T], Max0, Max) :-
 	Max1 is max(H, Max0),
 	max_list(T, Max1, Max).
+	
+% Obtaining final starting point, guaranteed to be on convex hull.
+newpoints1(Z,X,Y) :- 
+	right_max(Y), 
+	points(Z,X,Y).
+highest_rightmost(Z,X,Y) :- 
+	right_max(X), 
+	newpoints1(Z,X,Y).
+
+% calculating for the point farthest in either direction
+farthest_left(Z1,Z2) :- 
+	points(Z,X,Y),
+	newpoints(C,A,B),
+	newpoints1(D,E,F),
+	check_dir(A,B,E,F,Z1,Z2,Z),
+	Z>0.
+farthest_rightt(Z1,Z2) :- 
+	points(Z,X,Y),
+	newpoints(C,A,B),
+	newpoints1(D,E,F),
+	check_dir(A,B,E,F,Z1,Z2,Z),
+	Z<0.
+	
+%divide and conquer
+quickhull(Z,X,Y) :-
+	quickhull([Z1,Z2,Z3,Z4|Z],X,Y),
+	farthest_left(Z1,Z2),
+	farthest_right(Z3,Z4).
+	
