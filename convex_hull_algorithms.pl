@@ -80,5 +80,46 @@ mulexp(  N, Sig, N*Sig) :- ground(N).
 add_vect([], [], [], Cs, Cs).
 add_vect([U|Us], [V|Vs], [W|Ws], C1s, C2s) :- add_vect(Us, Vs, Ws, [W = U+V|C1s], C2s).
 
+%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 
+%GRAHAM SCAN
+:-['points.txt'].
+
+% pushing all points in a list
+lowest(T) :- findall(Y, points(Z,X,Y), T).
+leftmost(T) :- findall(X, newpoints(Z,X,Y), T).
+
+% calculating the lowest and the leftmost point
+left_min(X) :- leftmost(T),			   
+		list_min(T,X).
+low_min(X) :- lowest(T), 
+	       list_min(T,X).
+
+% Calculating minimum in a list.
+list_min([L|Ls], Min) :- list_min(Ls, L, Min).
+list_min([], Min, Min).
+list_min([L|Ls], Min0, Min) :- Min1 is min(L, Min0),
+				list_min(Ls, Min1, Min).
+				
+% Obtaining final starting point, guaranteed to be on convex hull.
+newpoints(Z,X,Y) :- low_min(Y), 
+		     points(Z,X,Y).
+lowest_leftmost(Z,X,Y) :- left_min(X), 
+			   newpoints(Z,X,Y).
+
+% Sorting based on angle.
+angle(T,C) :- lowest_leftmost(Z,X,Y), 
+		points(C,A,B), 
+		T is atan2((B-Y),(A-X))*(180/pi), 
+		Z\=C.
+prepsort(T-C) :- angle(T,C).
+finalsort(R) :- findall(C,prepsort(C),C), 
+		 keysort(C,R).
+
+check_dir(X1,Y1,X2,Y2,X3,Y3,Z) :- Z is ((X2-X1)*(Y3-Y1))-((Y2-Y1)*(X3-X1)).
+
+choose_three_points([],L)
+choose_three_points(Z,L) :- finalsort(Z), points(Z,X,Y), 
+
+graham_scan() :- 
 
