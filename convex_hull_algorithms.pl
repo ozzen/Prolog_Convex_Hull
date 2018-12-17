@@ -166,12 +166,30 @@ graham_scan(Z,X,Y) :-
 	-> 
 	graham_scan(Z3,X3,Y3)
 	; 
-	graham_scan(Z1,X1,Y1)}.
+	graham_scan(Z1,X1,Y1)
+	}.
 			
 %XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 
 % JARVIS MARCH
 
+% select a point from the list of points and compare
+select_random([Z]) :- 
+	points(Z,X,Y).
+compare_keep(Z) :-
+	points(Z,X,Y),
+	select_random(Z),
+	{
+	check_dir(X1,Y1,X2,Y2,X3,Y3,D), 
+	>=(D,0)
+	-> compare_keep([_|Z]
+	}.
+	
+jarvis_march(Z,X,Y) :- 
+	jarvis_march([C|Z],X,Y),
+	points(C,A,B),
+	compare_keep(C).
+	
 %XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 
 % QUICKHULL
@@ -213,7 +231,7 @@ farthest_left(Z1,Z2) :-
 	newpoints1(D,E,F),
 	check_dir(A,B,E,F,Z1,Z2,Z),
 	Z>0.
-farthest_rightt(Z1,Z2) :- 
+farthest_right(Z1,Z2) :- 
 	points(Z,X,Y),
 	newpoints(C,A,B),
 	newpoints1(D,E,F),
@@ -222,6 +240,7 @@ farthest_rightt(Z1,Z2) :-
 	
 %divide and conquer
 quickhull(Z,X,Y) :-
+	points(C,A,B),
 	quickhull([Z1,Z2,Z3,Z4|Z],X,Y),
 	farthest_left(Z1,Z2),
 	farthest_right(Z3,Z4).
